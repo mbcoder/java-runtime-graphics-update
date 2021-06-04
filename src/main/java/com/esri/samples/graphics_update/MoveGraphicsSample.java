@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Esri
+ * Copyright 2021 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -14,20 +14,31 @@
  * under the License.
  */
 
-package com.mycompany.app;
+package com.esri.samples.graphics_update;
 
 import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
+import com.esri.arcgisruntime.geometry.Point;
+import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.BasemapStyle;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
+import com.esri.arcgisruntime.mapping.view.Graphic;
+import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.MapView;
+import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
+import com.esri.arcgisruntime.symbology.SimpleRenderer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class App extends Application {
+import java.util.HashMap;
+
+public class MoveGraphicsSample extends Application {
 
     private MapView mapView;
+    private MessageGenerator messageGenerator;
+    private GraphicsOverlay graphicsOverlay;
+    private HashMap<String, Graphic> vehicles = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -60,10 +71,52 @@ public class App extends Application {
         stackPane.getChildren().add(mapView);
 
         // create an ArcGISMap with an imagery basemap
-        ArcGISMap map = new ArcGISMap(BasemapStyle.ARCGIS_IMAGERY);
+        ArcGISMap map = new ArcGISMap(Basemap.createLightGrayCanvas());
+
+        // graphics overlay for vehicles
+        graphicsOverlay = new GraphicsOverlay();
+        mapView.getGraphicsOverlays().add(graphicsOverlay);
+
+        SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, 0xFFFF0000,10);
+        SimpleRenderer renderer = new SimpleRenderer();
+        renderer.setSymbol(simpleMarkerSymbol);
+        graphicsOverlay.setRenderer(renderer);
 
         // display the map by setting the map on the map view
         mapView.setMap(map);
+
+        messageGenerator = new MessageGenerator(5000);
+
+
+        messageGenerator.addUpdateMessageListener(listener -> {
+            //System.out.println("got a message from my listener" + listener.getUpdateMessage().getVehicleID());
+
+            UpdateGraphic(listener.getUpdateMessage());
+        });
+
+        messageGenerator.startMessages();
+
+    }
+
+    private void UpdateGraphic(UpdateMessage updateMessage) {
+
+        Point position = updateMessage.getPosition();
+
+        // does graphic already exist?
+        if (vehicles.containsKey(updateMessage.getVehicleID())) {
+            //System.out.println("update");
+            //update the existing graphic
+            Graphic existingVehicle = vehicles.get(updateMessage.getVehicleID());
+            existingVehicle.setGeometry(updateMessage.getPosition());
+
+        } else {
+            //System.out.println("add");
+            // create new graphic
+            Graphic vehicleGraphic = new Graphic(position);
+            graphicsOverlay.getGraphics().add(vehicleGraphic);
+
+            vehicles.put(updateMessage.getVehicleID(), vehicleGraphic);
+        }
     }
 
     /**
@@ -75,5 +128,6 @@ public class App extends Application {
         if (mapView != null) {
             mapView.dispose();
         }
+        messageGenerator.stopMessages();
     }
 }

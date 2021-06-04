@@ -56,5 +56,5 @@ task copyNatives(type: Copy) {
 
 run {
     dependsOn copyNatives
-    mainClassName = 'com.mycompany.app.App'
+    mainClassName = 'com.esri.samples.graphics_update.MoveGraphicsLauncher'
 }
