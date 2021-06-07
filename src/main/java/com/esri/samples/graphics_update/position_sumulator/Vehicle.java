@@ -1,6 +1,4 @@
-package com.esri.samples.graphics_update;
-
-import com.esri.arcgisruntime.geometry.Point;
+package com.esri.samples.graphics_update.position_sumulator;
 
 public class Vehicle {
 

@@ -1,4 +1,4 @@
-package com.esri.samples.graphics_update;
+package com.esri.samples.graphics_update.position_sumulator;
 
 public class UpdateMessageEventRunner {
 

@@ -1,6 +1,5 @@
-package com.esri.samples.graphics_update;
+package com.esri.samples.graphics_update.position_sumulator;
 
-import com.esri.arcgisruntime.loadable.LoadStatusChangedEvent;
 import java.util.EventListener;
 
 

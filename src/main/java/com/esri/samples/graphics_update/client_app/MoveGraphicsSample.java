@@ -14,18 +14,19 @@
  * under the License.
  */
 
-package com.esri.samples.graphics_update;
+package com.esri.samples.graphics_update.client_app;
 
 import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.Basemap;
-import com.esri.arcgisruntime.mapping.BasemapStyle;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleRenderer;
+import com.esri.samples.graphics_update.position_sumulator.MessageGenerator;
+import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -77,6 +78,7 @@ public class MoveGraphicsSample extends Application {
         graphicsOverlay = new GraphicsOverlay();
         mapView.getGraphicsOverlays().add(graphicsOverlay);
 
+        // set up and apply a renderer
         SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, 0xFFFF0000,10);
         SimpleRenderer renderer = new SimpleRenderer();
         renderer.setSymbol(simpleMarkerSymbol);
@@ -85,17 +87,16 @@ public class MoveGraphicsSample extends Application {
         // display the map by setting the map on the map view
         mapView.setMap(map);
 
+        // create the message simulator which generates vehicle position updates
         messageGenerator = new MessageGenerator(5000);
 
-
+        // set up a listener for update messages
         messageGenerator.addUpdateMessageListener(listener -> {
-            //System.out.println("got a message from my listener" + listener.getUpdateMessage().getVehicleID());
-
             UpdateGraphic(listener.getUpdateMessage());
         });
 
+        // start the messages from the simulator
         messageGenerator.startMessages();
-
     }
 
     private void UpdateGraphic(UpdateMessage updateMessage) {
@@ -104,13 +105,11 @@ public class MoveGraphicsSample extends Application {
 
         // does graphic already exist?
         if (vehicles.containsKey(updateMessage.getVehicleID())) {
-            //System.out.println("update");
             //update the existing graphic
             Graphic existingVehicle = vehicles.get(updateMessage.getVehicleID());
             existingVehicle.setGeometry(updateMessage.getPosition());
 
         } else {
-            //System.out.println("add");
             // create new graphic
             Graphic vehicleGraphic = new Graphic(position);
             graphicsOverlay.getGraphics().add(vehicleGraphic);

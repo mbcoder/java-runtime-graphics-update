@@ -1,4 +1,4 @@
-package com.esri.samples.graphics_update;
+package com.esri.samples.graphics_update.client_app;
 
 public class MoveGraphicsLauncher {
 

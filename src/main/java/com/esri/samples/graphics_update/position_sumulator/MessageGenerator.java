@@ -1,4 +1,4 @@
-package com.esri.samples.graphics_update;
+package com.esri.samples.graphics_update.position_sumulator;
 
 import com.esri.arcgisruntime.geometry.Point;
 
@@ -13,7 +13,7 @@ public class MessageGenerator {
     private Timer timer;
 
 
-    public MessageGenerator(int vehices) {
+    public MessageGenerator(int totalVehicles) {
         Random random = new Random();
 
         ReadFiles();
@@ -27,7 +27,7 @@ public class MessageGenerator {
         System.out.println("path 1" + path.size());
 
         // create vehicles
-        for (int vehicleID=1; vehicleID<=vehices; vehicleID++ ) {
+        for (int vehicleID=1; vehicleID<=totalVehicles; vehicleID++ ) {
 
             //random route
             int routeID = random.nextInt(routes.size()) + 1;
