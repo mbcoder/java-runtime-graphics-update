@@ -44,6 +44,4 @@ public class Vehicle {
     public void setStatus(STATUS status) {
         this.status = status;
     }
-
-
 }

@@ -17,14 +17,15 @@
 package com.esri.samples.graphics_update.client_app;
 
 import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
+import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.MapView;
-import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
-import com.esri.arcgisruntime.symbology.SimpleRenderer;
+import com.esri.arcgisruntime.security.UserCredential;
+import com.esri.arcgisruntime.symbology.*;
 import com.esri.samples.graphics_update.position_sumulator.MessageGenerator;
 import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
 import javafx.application.Application;
@@ -32,7 +33,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class MoveGraphicsSample extends Application {
 
@@ -40,6 +43,9 @@ public class MoveGraphicsSample extends Application {
     private MessageGenerator messageGenerator;
     private GraphicsOverlay graphicsOverlay;
     private HashMap<String, Graphic> vehicles = new HashMap<>();
+
+
+    Symbol busSymbol = null;
 
     public static void main(String[] args) {
 
@@ -60,29 +66,24 @@ public class MoveGraphicsSample extends Application {
         Scene scene = new Scene(stackPane);
         stage.setScene(scene);
 
-        // Note: it is not best practice to store API keys in source code.
-        // An API key is required to enable access to services, web maps, and web scenes hosted in ArcGIS Online.
-        // If you haven't already, go to your developer dashboard to get your API key.
-        // Please refer to https://developers.arcgis.com/java/get-started/ for more information
-        String yourApiKey = "YOUR_API_KEY";
-        ArcGISRuntimeEnvironment.setApiKey(yourApiKey);
-
         // create a MapView to display the map and add it to the stack pane
         mapView = new MapView();
         stackPane.getChildren().add(mapView);
 
         // create an ArcGISMap with an imagery basemap
-        ArcGISMap map = new ArcGISMap(Basemap.createLightGrayCanvas());
+        ArcGISMap map = new ArcGISMap(Basemap.createLightGrayCanvasVector());
 
         // graphics overlay for vehicles
         graphicsOverlay = new GraphicsOverlay();
         mapView.getGraphicsOverlays().add(graphicsOverlay);
 
-        // set up and apply a renderer
-        SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, 0xFFFF0000,10);
-        SimpleRenderer renderer = new SimpleRenderer();
-        renderer.setSymbol(simpleMarkerSymbol);
-        graphicsOverlay.setRenderer(renderer);
+
+        File stylxFile = new File(System.getProperty("data.dir"), "./resources/Vehicles.stylx");
+        SymbolStyle vehicleStyle = new SymbolStyle(stylxFile.getAbsolutePath());
+        vehicleStyle.loadAsync();
+        vehicleStyle.addDoneLoadingListener(()-> {
+            makeRenderer(vehicleStyle);
+        });
 
         // display the map by setting the map on the map view
         mapView.setMap(map);
@@ -107,14 +108,87 @@ public class MoveGraphicsSample extends Application {
         if (vehicles.containsKey(updateMessage.getVehicleID())) {
             //update the existing graphic
             Graphic existingVehicle = vehicles.get(updateMessage.getVehicleID());
+            //existingVehicle.getAttributes().put("Status", updateMessage.getStatus().toString());
             existingVehicle.setGeometry(updateMessage.getPosition());
 
         } else {
             // create new graphic
             Graphic vehicleGraphic = new Graphic(position);
+            vehicleGraphic.getAttributes().put("Status", updateMessage.getStatus().toString());
             graphicsOverlay.getGraphics().add(vehicleGraphic);
 
+            System.out.println("added " + updateMessage.getVehicleID() + " status " + updateMessage.getStatus().toString());
+
+            // add vehicle graphic to hash map
             vehicles.put(updateMessage.getVehicleID(), vehicleGraphic);
+        }
+    }
+
+    /**
+     * Method to get symbols from style file and apply to renderer
+     * @param vehicleStyle
+     */
+
+    private void makeRenderer(SymbolStyle vehicleStyle) {
+
+        // create the unique value renderer
+        UniqueValueRenderer uniqueValueRenderer = new UniqueValueRenderer();
+        uniqueValueRenderer.getFieldNames().add("STATUS");
+
+        // default symbol
+        SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, 0xFFFF0000,10);
+        uniqueValueRenderer.setDefaultSymbol(simpleMarkerSymbol);
+
+        // all of the potential status values for the vehicles
+        ArrayList<String> symbolNames = new ArrayList<>(Arrays.asList("Available", "Off duty", "On route", "Attending call"));
+
+        // loop through the symbols to create the unique values for each status
+        for (String symbolName : symbolNames) {
+            ListenableFuture<Symbol> searchResult = vehicleStyle.getSymbolAsync(Collections.singletonList(symbolName));
+            searchResult.addDoneListener(()-> {
+                try {
+                    Symbol symbol = searchResult.get();
+
+                    switch (symbolName) {
+                        case "Available" :
+                            //List<Object> availableValue = new ArrayList<>();
+                            //availableValue.add("AVAILABLE");
+                            UniqueValueRenderer.UniqueValue uniqueAvailableValue =
+                                    new UniqueValueRenderer.UniqueValue(symbolName, symbolName, symbol, Collections.singletonList("AVAILABLE"));
+                            uniqueValueRenderer.getUniqueValues().add(uniqueAvailableValue);
+                            break;
+                        case "Off duty" :
+                            List<Object> offDutyValue = new ArrayList<>();
+                            offDutyValue.add("OFF_DUTY");
+                            UniqueValueRenderer.UniqueValue uniqueOffDutyValue =
+                                    new UniqueValueRenderer.UniqueValue(symbolName, symbolName, symbol, Collections.singletonList("OFF_DUTY"));
+                            uniqueValueRenderer.getUniqueValues().add(uniqueOffDutyValue);
+                            break;
+                        case "On route" :
+                            List<Object> onRouteValue = new ArrayList<>();
+                            onRouteValue.add("ON_ROUTE");
+                            UniqueValueRenderer.UniqueValue uniqueOnRouteValue =
+                                    new UniqueValueRenderer.UniqueValue(symbolName, symbolName, symbol, Collections.singletonList("ON_ROUTE"));
+                            uniqueValueRenderer.getUniqueValues().add(uniqueOnRouteValue);
+                            break;
+                        case "Attending call":
+                            List<Object> attendingCallValue = new ArrayList<>();
+                            attendingCallValue.add("ATTENDING_CALL");
+                            UniqueValueRenderer.UniqueValue uniqueAttendingCallValue =
+                                    new UniqueValueRenderer.UniqueValue(symbolName, symbolName, symbol, Collections.singletonList("ATTENDING_CALL"));
+                            uniqueValueRenderer.getUniqueValues().add(uniqueAttendingCallValue);
+                            break;
+                        default:
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            // apply unique value renderer to graphics overlay
+            graphicsOverlay.setRenderer(uniqueValueRenderer);
         }
     }
 

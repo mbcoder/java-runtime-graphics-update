@@ -12,19 +12,11 @@ public class MessageGenerator {
     private UpdateMessageEventRunner updateMessageEventRunner = null;
     private Timer timer;
 
-
     public MessageGenerator(int totalVehicles) {
         Random random = new Random();
 
+        // read in the route files
         ReadFiles();
-
-        System.out.println(" routes : " + routes.size());
-
-        System.out.println("keys :" + routes.keySet());
-
-        ArrayList<Point> path = routes.get(1);
-
-        System.out.println("path 1" + path.size());
 
         // create vehicles
         for (int vehicleID=1; vehicleID<=totalVehicles; vehicleID++ ) {
@@ -35,12 +27,14 @@ public class MessageGenerator {
             // random position along route
             int positionAlongRoute = random.nextInt(routes.get(routeID).size()) + 1;
 
-            Vehicle vehicle = new Vehicle("VEH" + vehicleID,routeID,positionAlongRoute, Vehicle.STATUS.AVAILABLE);
+            // random vehicle status
+            Vehicle.STATUS status = Vehicle.STATUS.values()[random.nextInt(Vehicle.STATUS.values().length)];
+
+            // create the new vehicle with random initial values
+            Vehicle vehicle = new Vehicle("VEH" + vehicleID,routeID,positionAlongRoute, status);
 
             // add vehicle to list
             vehicles.add(vehicle);
-
-            System.out.println("added " + vehicle.getVehicleID() + " on route " + routeID);
         }
     }
 
@@ -56,11 +50,6 @@ public class MessageGenerator {
             @Override
             public void run() {
                 if (updateMessageEventRunner != null) {
-
-                    //UpdateMessage message = new UpdateMessage("AAA", null, null);
-                    //UpdateMessageEvent event = new UpdateMessageEvent(this, message);
-                    //updateMessageEventRunner.run(event);
-
                     moveAllGraphics();
                 }
             }
@@ -76,8 +65,6 @@ public class MessageGenerator {
         ArrayList<Point> routePoints;
 
         for (Vehicle vehicle : vehicles) {
-
-            //System.out.print("old pos " + vehicle.getPositionAlongRoute());
 
             // new position along route
             newPosition = vehicle.getPositionAlongRoute() + 1;
@@ -95,8 +82,6 @@ public class MessageGenerator {
                 vehicle.setPositionAlongRoute(newPosition);
             }
 
-            //System.out.println(" new pos " + vehicle.getPositionAlongRoute());
-
             // construct an update message
             UpdateMessage updateMessage =
                     new UpdateMessage(vehicle.getVehicleID(), routePoints.get(newPosition), vehicle.getStatus());
@@ -104,8 +89,6 @@ public class MessageGenerator {
             // send the message to the subscriber
             UpdateMessageEvent event = new UpdateMessageEvent(this, updateMessage);
             updateMessageEventRunner.run(event);
-
-
         }
     }
 
@@ -150,18 +133,12 @@ public class MessageGenerator {
 
                     Point point = new Point(xPos, yPos);
                     path.add(point);
-                    //System.out.println("point " + point.toString());
                 }
-
                 // having read all the points for the path, create the route
                 routes.put(routeID++, path);
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-
         }
-
-
     }
 }
