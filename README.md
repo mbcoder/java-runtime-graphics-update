@@ -1,10 +1,12 @@
-# java-gradle-starter-project
+# java-runtime-graphics-update
 
-Here is a starter project for the ArcGIS Runtime SDK for Java with Gradle. 
+This repository contains the code which is explained in the blog post [Creating and updating 1000s of graphics in an ArcGIS Runtime application](https://blogs.esri.com/esri/arcgis/). 
+
+It shows techniques for writing an application which will allow you to efficiently render and update several 1000 graphics many times a second.
 
 The project includes the Gradle wrapper, so there is no need to install Gradle to run the app.
 
-The app launches a window displaying a map.
+The app launches a window displaying a map showing a simulated set of vehicle positions.
 
 ![screenshot](screenshot.png)
 
@@ -58,7 +60,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Licensing
 
-Copyright 2019 Esri
+Copyright 2021 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not 
 use this file except in compliance with the License. You may obtain a copy 
