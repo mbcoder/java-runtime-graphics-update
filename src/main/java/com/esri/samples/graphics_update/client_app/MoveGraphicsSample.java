@@ -81,7 +81,7 @@ public class MoveGraphicsSample extends Application {
         mapView.setMap(map);
 
         // create the message simulator which generates vehicle position updates
-        messageGenerator = new MessageGenerator(5000);
+        messageGenerator = new MessageGenerator(500);
 
         // set up a listener for update messages
         messageGenerator.addUpdateMessageListener(listener -> {
@@ -92,15 +92,18 @@ public class MoveGraphicsSample extends Application {
         messageGenerator.startMessages();
     }
 
+    /**
+     * Method to update a graphic from a vehicle update message.  If the message has come from a new vehicle
+     * then a new graphic will be added.
+     * @param updateMessage
+     */
     private void UpdateGraphic(UpdateMessage updateMessage) {
-
         Point position = updateMessage.getPosition();
 
         // does graphic already exist?
         if (vehicles.containsKey(updateMessage.getVehicleID())) {
-            //update the existing graphic
+            //update the existing graphic with a new point geometry
             Graphic existingVehicle = vehicles.get(updateMessage.getVehicleID());
-            //existingVehicle.getAttributes().put("Status", updateMessage.getStatus().toString());
             existingVehicle.setGeometry(updateMessage.getPosition());
 
         } else {
@@ -108,8 +111,6 @@ public class MoveGraphicsSample extends Application {
             Graphic vehicleGraphic = new Graphic(position);
             vehicleGraphic.getAttributes().put("Status", updateMessage.getStatus().toString());
             graphicsOverlay.getGraphics().add(vehicleGraphic);
-
-            System.out.println("added " + updateMessage.getVehicleID() + " status " + updateMessage.getStatus().toString());
 
             // add vehicle graphic to hash map
             vehicles.put(updateMessage.getVehicleID(), vehicleGraphic);
