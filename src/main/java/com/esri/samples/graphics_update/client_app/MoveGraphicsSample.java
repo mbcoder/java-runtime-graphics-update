@@ -15,8 +15,6 @@
  */
 
 package com.esri.samples.graphics_update.client_app;
-
-import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.Basemap;
@@ -24,7 +22,6 @@ import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.MapView;
-import com.esri.arcgisruntime.security.UserCredential;
 import com.esri.arcgisruntime.symbology.*;
 import com.esri.samples.graphics_update.position_sumulator.MessageGenerator;
 import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
@@ -38,17 +35,12 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class MoveGraphicsSample extends Application {
-
     private MapView mapView;
     private MessageGenerator messageGenerator;
     private GraphicsOverlay graphicsOverlay;
     private HashMap<String, Graphic> vehicles = new HashMap<>();
 
-
-    Symbol busSymbol = null;
-
     public static void main(String[] args) {
-
         Application.launch(args);
     }
 
@@ -56,7 +48,7 @@ public class MoveGraphicsSample extends Application {
     public void start(Stage stage) {
 
         // set the title and size of the stage and show it
-        stage.setTitle("My Map App");
+        stage.setTitle("Vehicle position monitoring app");
         stage.setWidth(800);
         stage.setHeight(700);
         stage.show();
@@ -151,8 +143,6 @@ public class MoveGraphicsSample extends Application {
 
                     switch (symbolName) {
                         case "Available" :
-                            //List<Object> availableValue = new ArrayList<>();
-                            //availableValue.add("AVAILABLE");
                             UniqueValueRenderer.UniqueValue uniqueAvailableValue =
                                     new UniqueValueRenderer.UniqueValue(symbolName, symbolName, symbol, Collections.singletonList("AVAILABLE"));
                             uniqueValueRenderer.getUniqueValues().add(uniqueAvailableValue);
@@ -197,7 +187,6 @@ public class MoveGraphicsSample extends Application {
      */
     @Override
     public void stop() {
-
         if (mapView != null) {
             mapView.dispose();
         }

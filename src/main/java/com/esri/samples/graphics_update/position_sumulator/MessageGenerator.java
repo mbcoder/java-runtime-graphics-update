@@ -1,10 +1,28 @@
+/**
+ * Copyright 2021 Esri
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.esri.samples.graphics_update.position_sumulator;
 
 import com.esri.arcgisruntime.geometry.Point;
-
 import java.io.*;
 import java.util.*;
 
+/**
+ * A class for generating simulated vehicle update messages
+ */
 public class MessageGenerator {
 
     private HashMap<Integer, ArrayList<Point>> routes = new HashMap<>();
@@ -12,6 +30,10 @@ public class MessageGenerator {
     private UpdateMessageEventRunner updateMessageEventRunner = null;
     private Timer timer;
 
+    /**
+     * Constructor for a new vehicle message generator.
+     * @param totalVehicles the number of vehicles messages will be generated for
+     */
     public MessageGenerator(int totalVehicles) {
         Random random = new Random();
 
@@ -38,6 +60,10 @@ public class MessageGenerator {
         }
     }
 
+    /**
+     * Adds a listener for receiving vehicle update messages.  Only one listener is supported.
+     * @param listener the listener
+     */
     public void addUpdateMessageListener(UpdateMessageListener listener) {
         // singleton; only one listener
         if (updateMessageEventRunner == null) {
@@ -45,6 +71,9 @@ public class MessageGenerator {
         }
     }
 
+    /**
+     * Method to start generating update messages for each vehicle
+     */
     public void startMessages() {
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -55,10 +84,14 @@ public class MessageGenerator {
             }
         };
 
+        // timer to generate new messages on a separate thread every 20ms
         timer = new Timer();
         timer.schedule(timerTask,1000,20);
     }
 
+    /**
+     * Method to iterate through all vehicles and provide an update message with a new position
+     */
     private void moveAllGraphics() {
         // loop through all the vehicles and increment the position along the route
         int newPosition;
@@ -92,11 +125,16 @@ public class MessageGenerator {
         }
     }
 
+    /**
+     * Method to stop vehicle update messages.  This method should be called when closing the JavaFX application
+     */
     public void stopMessages() {
         timer.cancel();
     }
 
-
+    /**
+     * Method to read route information from CVS files contained in a data directory
+     */
     private void ReadFiles() {
         int routeID = 1;
 
