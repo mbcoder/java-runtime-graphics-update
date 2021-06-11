@@ -152,22 +152,16 @@ public class MoveGraphicsSample extends Application {
                             uniqueValueRenderer.getUniqueValues().add(uniqueAvailableValue);
                             break;
                         case "Off duty" :
-                            List<Object> offDutyValue = new ArrayList<>();
-                            offDutyValue.add("OFF_DUTY");
                             UniqueValueRenderer.UniqueValue uniqueOffDutyValue =
                                     new UniqueValueRenderer.UniqueValue(symbolName, symbolName, symbol, Collections.singletonList("OFF_DUTY"));
                             uniqueValueRenderer.getUniqueValues().add(uniqueOffDutyValue);
                             break;
                         case "On route" :
-                            List<Object> onRouteValue = new ArrayList<>();
-                            onRouteValue.add("ON_ROUTE");
                             UniqueValueRenderer.UniqueValue uniqueOnRouteValue =
                                     new UniqueValueRenderer.UniqueValue(symbolName, symbolName, symbol, Collections.singletonList("ON_ROUTE"));
                             uniqueValueRenderer.getUniqueValues().add(uniqueOnRouteValue);
                             break;
                         case "Attending call":
-                            List<Object> attendingCallValue = new ArrayList<>();
-                            attendingCallValue.add("ATTENDING_CALL");
                             UniqueValueRenderer.UniqueValue uniqueAttendingCallValue =
                                     new UniqueValueRenderer.UniqueValue(symbolName, symbolName, symbol, Collections.singletonList("ATTENDING_CALL"));
                             uniqueValueRenderer.getUniqueValues().add(uniqueAttendingCallValue);
