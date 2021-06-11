@@ -26,7 +26,6 @@ import com.esri.arcgisruntime.symbology.*;
 import com.esri.samples.graphics_update.position_sumulator.MessageGenerator;
 import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
 import javafx.application.Application;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -63,7 +62,7 @@ public class MoveGraphicsSample extends Application {
         mapView = new MapView();
         stackPane.getChildren().add(mapView);
 
-        // create an ArcGISMap with an imagery basemap
+        // create an ArcGISMap with a basemap
         ArcGISMap map = new ArcGISMap(Basemap.createLightGrayCanvasVector());
 
         // graphics overlay for vehicles
@@ -136,10 +135,10 @@ public class MoveGraphicsSample extends Application {
         SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, 0xFFFF0000,10);
         uniqueValueRenderer.setDefaultSymbol(simpleMarkerSymbol);
 
-        // all of the potential status values for the vehicles
+        // create a list of all of the potential symbol names that correspond to status values for the vehicles
         ArrayList<String> symbolNames = new ArrayList<>(Arrays.asList("Available", "Off duty", "On route", "Attending call"));
 
-        // loop through the symbols to create the unique values for each status
+        // loop through the symbol names to create unique values for each status within the unique value renderer
         for (String symbolName : symbolNames) {
             ListenableFuture<Symbol> searchResult = vehicleStyle.getSymbolAsync(Collections.singletonList(symbolName));
             searchResult.addDoneListener(()-> {

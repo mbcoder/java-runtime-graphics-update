@@ -23,6 +23,6 @@ public interface UpdateMessageListener extends EventListener {
      * Invoked when a vehicle message is generated
      * @param vehicleUpdateMessageEvent
      */
-    public void updateMessage(UpdateMessageEvent vehicleUpdateMessageEvent);
+    void updateMessage(UpdateMessageEvent vehicleUpdateMessageEvent);
 }
 

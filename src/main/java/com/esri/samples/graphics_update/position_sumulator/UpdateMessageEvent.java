@@ -18,7 +18,13 @@ package com.esri.samples.graphics_update.position_sumulator;
 
 import java.util.EventObject;
 
+/**
+ * Class for the update message event
+ */
 public final class UpdateMessageEvent extends EventObject {
+
+    private final UpdateMessage updateMessage;
+
     /**
      * Constructs a prototypical Event.
      *
@@ -26,8 +32,6 @@ public final class UpdateMessageEvent extends EventObject {
      * @param newUpdateMessage the update message containing vehicle position and status update
      * @throws IllegalArgumentException if source is null
      */
-    private final UpdateMessage updateMessage;
-
     public UpdateMessageEvent(Object source, UpdateMessage newUpdateMessage) {
         super(source);
         this.updateMessage = newUpdateMessage;

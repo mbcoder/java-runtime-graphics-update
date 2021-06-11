@@ -150,8 +150,7 @@ public class MessageGenerator {
             double yPos;
 
             // open file
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(file));
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))){
 
                 while (true) {
                     try {
@@ -177,9 +176,6 @@ public class MessageGenerator {
                 }
                 // having read all the points for the path, create the route
                 routes.put(routeID++, path);
-
-                // close the file reader
-                reader.close();
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
