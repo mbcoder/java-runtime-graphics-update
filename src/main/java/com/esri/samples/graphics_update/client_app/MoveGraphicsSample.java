@@ -81,7 +81,7 @@ public class MoveGraphicsSample extends Application {
         mapView.setMap(map);
 
         // create the message simulator which generates vehicle position updates
-        messageGenerator = new MessageGenerator(500);
+        messageGenerator = new MessageGenerator(5000);
 
         // set up a listener for update messages
         messageGenerator.addUpdateMessageListener(listener -> {
