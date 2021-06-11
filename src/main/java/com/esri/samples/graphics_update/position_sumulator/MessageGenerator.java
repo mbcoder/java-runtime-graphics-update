@@ -105,7 +105,7 @@ public class MessageGenerator {
             // get points for route
             routePoints = routes.get(vehicle.getRouteID());
 
-            // check we've not reached end end of the route
+            // check we've not reached the end of the route
             if (newPosition < routePoints.size()) {
                 // update position to next point along route
                 vehicle.setPositionAlongRoute(newPosition);
@@ -177,9 +177,7 @@ public class MessageGenerator {
                 // having read all the points for the path, create the route
                 routes.put(routeID++, path);
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
