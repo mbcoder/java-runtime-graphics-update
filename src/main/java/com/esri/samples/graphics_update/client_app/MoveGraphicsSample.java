@@ -26,6 +26,7 @@ import com.esri.arcgisruntime.symbology.*;
 import com.esri.samples.graphics_update.position_sumulator.MessageGenerator;
 import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -90,6 +91,9 @@ public class MoveGraphicsSample extends Application {
 
         // start the messages from the simulator
         messageGenerator.startMessages();
+
+        // set the initial viewpoint of the map view
+        mapView.setViewpointCenterAsync(new Point(-286323, 7556611), 3000);
     }
 
     /**

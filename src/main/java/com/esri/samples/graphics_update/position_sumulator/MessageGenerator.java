@@ -38,7 +38,7 @@ public class MessageGenerator {
         Random random = new Random();
 
         // read in the route files
-        ReadFiles();
+        ReadRouteFiles();
 
         // create vehicles
         for (int vehicleID=1; vehicleID<=totalVehicles; vehicleID++ ) {
@@ -135,7 +135,7 @@ public class MessageGenerator {
     /**
      * Method to read route information from CVS files contained in a data directory
      */
-    private void ReadFiles() {
+    private void ReadRouteFiles() {
         int routeID = 1;
 
         // loop through all the route files
@@ -148,33 +148,42 @@ public class MessageGenerator {
             String csvItem;
             double xPos;
             double yPos;
+
             // open file
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
 
                 while (true) {
                     try {
+                        // read the line and exit while loop if we reach end of file
                         if (!((line = reader.readLine()) != null)) break;
+
+                        StringTokenizer tokenizer = new StringTokenizer(line,",");
+
+                        //read the x position
+                        csvItem = tokenizer.nextToken();
+                        xPos = Double.parseDouble(csvItem);
+
+                        // read the y position
+                        csvItem = tokenizer.nextToken();
+                        yPos = Double.parseDouble(csvItem);
+
+                        // create the point from CSV values
+                        Point point = new Point(xPos, yPos);
+                        path.add(point);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                    StringTokenizer tokenizer = new StringTokenizer(line,",");
-
-                    //read the x position
-                    csvItem = tokenizer.nextToken();
-                    xPos = Double.parseDouble(csvItem);
-
-                    // read the y position
-                    csvItem = tokenizer.nextToken();
-                    yPos = Double.parseDouble(csvItem);
-
-                    Point point = new Point(xPos, yPos);
-                    path.add(point);
                 }
                 // having read all the points for the path, create the route
                 routes.put(routeID++, path);
+
+                // close the file reader
+                reader.close();
+
             } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
