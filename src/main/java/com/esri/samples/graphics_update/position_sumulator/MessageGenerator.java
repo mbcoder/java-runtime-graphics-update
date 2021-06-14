@@ -38,12 +38,12 @@ public class MessageGenerator {
         Random random = new Random();
 
         // read in the route files
-        ReadRouteFiles();
+        readRouteFiles();
 
         // create vehicles
         for (int vehicleID=1; vehicleID<=totalVehicles; vehicleID++ ) {
 
-            //random route
+            // random route
             int routeID = random.nextInt(routes.size()) + 1;
 
             // random position along route
@@ -133,9 +133,9 @@ public class MessageGenerator {
     }
 
     /**
-     * Method to read route information from CVS files contained in a data directory
+     * Method to read route information from CSV files contained in a data directory
      */
-    private void ReadRouteFiles() {
+    private void readRouteFiles() {
         int routeID = 1;
 
         // loop through all the route files
@@ -159,7 +159,7 @@ public class MessageGenerator {
 
                         StringTokenizer tokenizer = new StringTokenizer(line,",");
 
-                        //read the x position
+                        // read the x position
                         csvItem = tokenizer.nextToken();
                         xPos = Double.parseDouble(csvItem);
 

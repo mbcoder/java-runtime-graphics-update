@@ -25,6 +25,7 @@ import com.esri.arcgisruntime.mapping.view.MapView;
 import com.esri.arcgisruntime.symbology.*;
 import com.esri.samples.graphics_update.position_sumulator.MessageGenerator;
 import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -70,7 +71,7 @@ public class MoveGraphicsSample extends Application {
         mapView.getGraphicsOverlays().add(graphicsOverlay);
 
 
-        File stylxFile = new File(System.getProperty("data.dir"), "./resources/Vehicles.stylx");
+        File stylxFile = new File("./resources/Vehicles.stylx");
         SymbolStyle vehicleStyle = new SymbolStyle(stylxFile.getAbsolutePath());
         vehicleStyle.loadAsync();
         vehicleStyle.addDoneLoadingListener(()-> {
@@ -80,12 +81,13 @@ public class MoveGraphicsSample extends Application {
         // display the map by setting the map on the map view
         mapView.setMap(map);
 
-        // create the message simulator which generates vehicle position updates
+        // create the message simulator which generates vehicle position updates.
+        // 5000 vehicles have been chosen for this demonstration, but you can experiment with more.
         messageGenerator = new MessageGenerator(5000);
 
         // set up a listener for update messages
         messageGenerator.addUpdateMessageListener(listener -> {
-            UpdateGraphic(listener.getUpdateMessage());
+            updateGraphic(listener.getUpdateMessage());
         });
 
         // start the messages from the simulator
@@ -100,7 +102,7 @@ public class MoveGraphicsSample extends Application {
      * then a new graphic will be added.
      * @param updateMessage
      */
-    private void UpdateGraphic(UpdateMessage updateMessage) {
+    private void updateGraphic(UpdateMessage updateMessage) {
         Point position = updateMessage.getPosition();
 
         // does graphic already exist?

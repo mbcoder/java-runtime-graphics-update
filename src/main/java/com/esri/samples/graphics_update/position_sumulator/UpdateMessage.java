@@ -19,7 +19,7 @@ package com.esri.samples.graphics_update.position_sumulator;
 import com.esri.arcgisruntime.geometry.Point;
 
 /**
- * A class representing a vehicle update message
+ * A class representing a vehicle update message.
  */
 public class UpdateMessage {
 
