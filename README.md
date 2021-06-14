@@ -42,7 +42,7 @@ The app launches a window displaying a map showing a simulated set of vehicle po
 
 ## Requirements
 
-See the Runtime SDK's [system requirements](https://developers.arcgis.com/java/latest/guide/system-requirements.htm).
+See the Runtime SDK's [system requirements](https://developers.arcgis.com/java/reference/system-requirements/).
 
 ## Resources
 
