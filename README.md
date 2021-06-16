@@ -1,6 +1,6 @@
 # java-runtime-graphics-update
 
-This repository contains the code which is explained in the blog post [Creating and updating 1000s of graphics in an ArcGIS Runtime application](https://blogs.esri.com/esri/arcgis/). 
+This repository contains the code which is explained in the blog post [Creating and updating 1000s of graphics in an ArcGIS Runtime application](https://community.esri.com/t5/arcgis-runtime-sdks-blog/creating-and-updating-1000s-of-graphics-in-an-arcgis-runtime/ba-p/1068807). 
 
 It shows techniques for writing an application which will allow you to efficiently render and update several 1000 graphics many times a second.
 
