@@ -8,7 +8,7 @@ The project includes the Gradle wrapper, so there is no need to install Gradle t
 
 The app launches a window displaying a map showing a simulated set of vehicle positions.
 
-![screenshot](screenshot.png)
+![screenshot](screenshot.gif)
 
 ## Instructions
 
