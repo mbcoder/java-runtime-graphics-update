@@ -38,6 +38,7 @@ dependencies {
     implementation "com.esri.arcgisruntime:arcgis-java:$arcgisVersion"
     natives "com.esri.arcgisruntime:arcgis-java-jnilibs:$arcgisVersion"
     natives "com.esri.arcgisruntime:arcgis-java-resources:$arcgisVersion"
+    implementation "org.apache.commons:commons-collections4:4.4"
 }
 
 javafx {

@@ -17,6 +17,9 @@
 package com.esri.samples.graphics_update.client_app;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.Point;
+import com.esri.arcgisruntime.geometry.PointCollection;
+import com.esri.arcgisruntime.geometry.Polyline;
+import com.esri.arcgisruntime.geometry.SpatialReferences;
 import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.view.Graphic;
@@ -30,6 +33,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 import java.io.File;
 import java.util.*;
@@ -38,8 +42,12 @@ import java.util.concurrent.ExecutionException;
 public class MoveGraphicsSample extends Application {
     private MapView mapView;
     private MessageGenerator messageGenerator;
-    private GraphicsOverlay graphicsOverlay;
+    private GraphicsOverlay vehicleGraphicsOverlay;
+    private GraphicsOverlay trailGraphicsOverlay;
     private HashMap<String, Graphic> vehicles = new HashMap<>();
+    private HashMap<String, CircularFifoQueue<Point>> trailPoints = new HashMap<>();
+    private HashMap<String, Graphic> trailGraphics = new HashMap<>();
+    private int trailLength = 500; // the length of the trail we draw behind vehicles
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -66,11 +74,20 @@ public class MoveGraphicsSample extends Application {
         // create an ArcGISMap with a basemap
         ArcGISMap map = new ArcGISMap(Basemap.createLightGrayCanvasVector());
 
+        // line symbol in a renderer for trails
+        SimpleLineSymbol trailSymbol = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, 0xFFFF0000,5);
+        SimpleRenderer trailRenderer = new SimpleRenderer(trailSymbol);
+
+        // graphics overlay for trails
+        trailGraphicsOverlay = new GraphicsOverlay(GraphicsOverlay.RenderingMode.STATIC);
+        trailGraphicsOverlay.setRenderer(trailRenderer);
+        mapView.getGraphicsOverlays().add(trailGraphicsOverlay);
+
         // graphics overlay for vehicles
-        graphicsOverlay = new GraphicsOverlay();
-        mapView.getGraphicsOverlays().add(graphicsOverlay);
+        vehicleGraphicsOverlay = new GraphicsOverlay();
+        mapView.getGraphicsOverlays().add(vehicleGraphicsOverlay);
 
-
+        // style file contains the symbols we are using for the vehicles
         File stylxFile = new File("./resources/Vehicles.stylx");
         SymbolStyle vehicleStyle = new SymbolStyle(stylxFile.getAbsolutePath());
         vehicleStyle.loadAsync();
@@ -83,7 +100,7 @@ public class MoveGraphicsSample extends Application {
 
         // create the message simulator which generates vehicle position updates.
         // 5000 vehicles have been chosen for this demonstration, but you can experiment with more.
-        messageGenerator = new MessageGenerator(5000);
+        messageGenerator = new MessageGenerator(100);
 
         // set up a listener for update messages
         messageGenerator.addUpdateMessageListener(listener -> {
@@ -111,14 +128,37 @@ public class MoveGraphicsSample extends Application {
             Graphic existingVehicle = vehicles.get(updateMessage.getVehicleID());
             existingVehicle.setGeometry(updateMessage.getPosition());
 
+            // update the trail points
+            CircularFifoQueue trail = trailPoints.get(updateMessage.getVehicleID());
+            trail.add(updateMessage.getPosition());
+
+            // update the graphic
+            PointCollection points = new PointCollection(SpatialReferences.getWebMercator());
+            for (Object ptObj : trail) {
+                points.add((Point) ptObj);
+            }
+            Polyline polyline = new Polyline(points);
+
+            Graphic trailGraphic = trailGraphics.get(updateMessage.getVehicleID());
+            trailGraphic.setGeometry(polyline);
+
         } else {
             // create new graphic
             Graphic vehicleGraphic = new Graphic(position);
             vehicleGraphic.getAttributes().put("Status", updateMessage.getStatus().toString());
-            graphicsOverlay.getGraphics().add(vehicleGraphic);
+            vehicleGraphicsOverlay.getGraphics().add(vehicleGraphic);
 
             // add vehicle graphic to hash map
             vehicles.put(updateMessage.getVehicleID(), vehicleGraphic);
+
+            // set up storage for the trail points
+            trailPoints.put(updateMessage.getVehicleID(), new CircularFifoQueue<Point>(trailLength));
+
+            // set up empty graphic for trail
+            Graphic trailGraphic = new Graphic();
+            trailGraphics.put(updateMessage.getVehicleID(), trailGraphic);
+            trailGraphicsOverlay.getGraphics().add(trailGraphic);
+
         }
     }
 
@@ -178,7 +218,7 @@ public class MoveGraphicsSample extends Application {
             });
 
             // apply unique value renderer to graphics overlay
-            graphicsOverlay.setRenderer(uniqueValueRenderer);
+            vehicleGraphicsOverlay.setRenderer(uniqueValueRenderer);
         }
     }
 
