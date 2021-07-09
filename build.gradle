@@ -58,3 +58,13 @@ run {
     dependsOn copyNatives
     mainClassName = 'com.esri.samples.graphics_update.client_app.MoveGraphicsLauncher'
 }
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes("Main-Class": "$mainClassName")
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
