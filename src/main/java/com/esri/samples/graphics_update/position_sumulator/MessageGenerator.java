@@ -139,7 +139,9 @@ public class MessageGenerator {
         int routeID = 1;
 
         // loop through all the route files
-        File folder = new File("./data/");
+        File folder = new File( System.getProperty("app.dir"),"data/");
+        System.out.println("data dir " + folder.getName());
+
         File[] listOfFiles = folder.listFiles();
 
         for (File file : listOfFiles) {
@@ -151,7 +153,7 @@ public class MessageGenerator {
 
             // open file
             try (BufferedReader reader = new BufferedReader(new FileReader(file))){
-
+                System.out.println("reading file " + file);
                 while (true) {
                     try {
                         // read the line and exit while loop if we reach end of file

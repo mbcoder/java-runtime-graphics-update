@@ -112,7 +112,7 @@ runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages', '--bind-services']
 
     launcher {
-        noConsole = true
+        noConsole = false
     }
     jpackage {
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
