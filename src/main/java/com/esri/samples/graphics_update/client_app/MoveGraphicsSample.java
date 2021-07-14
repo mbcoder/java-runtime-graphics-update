@@ -70,8 +70,16 @@ public class MoveGraphicsSample extends Application {
         graphicsOverlay = new GraphicsOverlay();
         mapView.getGraphicsOverlays().add(graphicsOverlay);
 
+        String appDirPath = findAppDirectoryPath();
+        //getClass().getResource("/symbol_dictionary/symbol_view.fxml")
+        System.out.println("exec dir = " + System.getProperty("user.dir"));
 
-        File stylxFile = new File("./resources/Vehicles.stylx");
+        File stylxFile = new File(System.getProperty("data.dir"),"./resources/Vehicles.stylx");
+        if (stylxFile.exists()) {
+            System.out.println("file found " + System.getProperty("data.dir"));
+        } else {
+            System.out.println("file not found");
+        }
         SymbolStyle vehicleStyle = new SymbolStyle(stylxFile.getAbsolutePath());
         vehicleStyle.loadAsync();
         vehicleStyle.addDoneLoadingListener(()-> {
@@ -95,6 +103,30 @@ public class MoveGraphicsSample extends Application {
 
         // set the initial viewpoint of the map view
         mapView.setViewpointCenterAsync(new Point(-286323, 7556611), 3000);
+    }
+
+    private String findAppDirectoryPath(){
+
+
+        // initially look in path relative where we are running the app from
+        String appDirPath = System.getProperty("user.dir") ;
+        System.out.println("looking for " + appDirPath);
+        File appDir = new File(appDirPath + "/data");
+
+        if (appDir.exists()) {
+            System.out.println("found in " + appDirPath);
+            return appDirPath;
+        } else {
+            // look in the ../lib directory
+            appDirPath = System.getProperty("user.dir") + "/../lib";
+            System.out.println("looking for " + appDirPath);
+            File appDirLib = new File(appDirPath + "/data");
+            if (appDirLib.exists()) {
+                System.out.println("found in " + appDirPath);
+                return appDirPath;
+            } else return null;
+        }
+
     }
 
     /**

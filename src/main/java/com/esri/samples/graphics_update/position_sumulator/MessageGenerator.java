@@ -155,7 +155,7 @@ public class MessageGenerator {
                 while (true) {
                     try {
                         // read the line and exit while loop if we reach end of file
-                        if (!((line = reader.readLine()) != null)) break;
+                        if ((line = reader.readLine()) == null) break;
 
                         StringTokenizer tokenizer = new StringTokenizer(line,",");
 
