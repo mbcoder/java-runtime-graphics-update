@@ -17,6 +17,8 @@
 package com.esri.samples.graphics_update.position_sumulator;
 
 import com.esri.arcgisruntime.geometry.Point;
+import javafx.scene.control.Alert;
+
 import java.io.*;
 import java.util.*;
 
@@ -38,25 +40,25 @@ public class MessageGenerator {
         Random random = new Random();
 
         // read in the route files
-        readRouteFiles();
+        if (readRouteFiles()) {
+            // create vehicles
+            for (int vehicleID = 1; vehicleID <= totalVehicles; vehicleID++) {
 
-        // create vehicles
-        for (int vehicleID=1; vehicleID<=totalVehicles; vehicleID++ ) {
+                // random route
+                int routeID = random.nextInt(routes.size()) + 1;
 
-            // random route
-            int routeID = random.nextInt(routes.size()) + 1;
+                // random position along route
+                int positionAlongRoute = random.nextInt(routes.get(routeID).size()) + 1;
 
-            // random position along route
-            int positionAlongRoute = random.nextInt(routes.get(routeID).size()) + 1;
+                // random vehicle status
+                Vehicle.STATUS status = Vehicle.STATUS.values()[random.nextInt(Vehicle.STATUS.values().length)];
 
-            // random vehicle status
-            Vehicle.STATUS status = Vehicle.STATUS.values()[random.nextInt(Vehicle.STATUS.values().length)];
+                // create the new vehicle with random initial values
+                Vehicle vehicle = new Vehicle("VEH" + vehicleID, routeID, positionAlongRoute, status);
 
-            // create the new vehicle with random initial values
-            Vehicle vehicle = new Vehicle("VEH" + vehicleID,routeID,positionAlongRoute, status);
-
-            // add vehicle to list
-            vehicles.add(vehicle);
+                // add vehicle to list
+                vehicles.add(vehicle);
+            }
         }
     }
 
@@ -135,13 +137,18 @@ public class MessageGenerator {
     /**
      * Method to read route information from CSV files contained in a data directory
      */
-    private void readRouteFiles() {
+    private boolean readRouteFiles() {
         int routeID = 1;
 
-        // loop through all the route files
+        // folder which contains files
         File folder = new File( System.getProperty("app.dir"),"data/");
-        System.out.println("data dir " + folder.getName());
 
+        // return if the directory is not there
+        if (!folder.isDirectory()) {
+            return false;
+        }
+
+        // loop through all the route files
         File[] listOfFiles = folder.listFiles();
 
         for (File file : listOfFiles) {
@@ -153,7 +160,6 @@ public class MessageGenerator {
 
             // open file
             try (BufferedReader reader = new BufferedReader(new FileReader(file))){
-                System.out.println("reading file " + file);
                 while (true) {
                     try {
                         // read the line and exit while loop if we reach end of file
@@ -181,7 +187,9 @@ public class MessageGenerator {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                return false;
             }
         }
+        return true;
     }
 }

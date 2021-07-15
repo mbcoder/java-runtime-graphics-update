@@ -15,6 +15,7 @@
  */
 
 package com.esri.samples.graphics_update.client_app;
+import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.Basemap;
@@ -29,6 +30,7 @@ import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -42,6 +44,7 @@ public class MoveGraphicsSample extends Application {
     private HashMap<String, Graphic> vehicles = new HashMap<>();
 
     public static void main(String[] args) {
+        ArcGISRuntimeEnvironment.setInstallDirectory("/Users/mark8487/IdeaProjects/java-runtime-graphics-update/build/jpackage/java-runtime-graphics-update.app/Contents/app");
         Application.launch(args);
     }
 
@@ -70,18 +73,11 @@ public class MoveGraphicsSample extends Application {
         graphicsOverlay = new GraphicsOverlay();
         mapView.getGraphicsOverlays().add(graphicsOverlay);
 
-        System.out.println("app dir = " + System.getProperty("app.dir"));
-
+        // get the style file for rendering the points
         File stylxFile = new File(System.getProperty("app.dir"),"resources/Vehicles.stylx");
-        //if (stylxFile.exists()) {
-        //    System.out.println("file found " + System.getProperty("data.dir"));
-        //} else {
-        //    System.out.println("file not found");
-        //}
         SymbolStyle vehicleStyle = new SymbolStyle(stylxFile.getAbsolutePath());
         vehicleStyle.loadAsync();
         vehicleStyle.addDoneLoadingListener(()-> {
-            System.out.println("loaded style");
             makeRenderer(vehicleStyle);
         });
 
