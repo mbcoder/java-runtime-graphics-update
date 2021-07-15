@@ -43,7 +43,10 @@ public class MoveGraphicsSample extends Application {
     private HashMap<String, Graphic> vehicles = new HashMap<>();
 
     public static void main(String[] args) {
-        ArcGISRuntimeEnvironment.setInstallDirectory("/Users/mark8487/IdeaProjects/java-runtime-graphics-update/build/jpackage/java-runtime-graphics-update.app/Contents/app");
+        //if running from jPackage, get jniLibs from app directory
+        if (System.getProperty("app.dir") != null) {
+            ArcGISRuntimeEnvironment.setInstallDirectory(System.getProperty("app.dir"));
+        }
         Application.launch(args);
     }
 
