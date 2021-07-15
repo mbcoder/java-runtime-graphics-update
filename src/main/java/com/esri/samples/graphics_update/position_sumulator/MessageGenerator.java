@@ -17,7 +17,6 @@
 package com.esri.samples.graphics_update.position_sumulator;
 
 import com.esri.arcgisruntime.geometry.Point;
-import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.util.*;

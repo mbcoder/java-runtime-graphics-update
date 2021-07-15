@@ -30,7 +30,6 @@ import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
 
 import java.io.File;
