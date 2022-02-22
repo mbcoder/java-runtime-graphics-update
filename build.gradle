@@ -108,7 +108,6 @@ runtime {
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
         def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
         imageOptions += ['--icon', "icon.$imgType"]
-        //installerOptions += ['--resource-dir', "src/main/resources"]
         installerOptions += ['--vendor', 'ESRI Inc']
 
         if(currentOs.windows) {
@@ -116,7 +115,7 @@ runtime {
             jvmArgs = ['-Dapp.dir=$ROOTDIR/app']
         }
         else if (currentOs.linux) {
-            installerOptions += ['--linux-package-name', 'hellofx','--linux-shortcut']
+            installerOptions += ['--linux-package-name', 'Move Graphics App','--linux-shortcut']
             jvmArgs = ['-Dapp.dir=$ROOTDIR/lib/app']
 
         }
