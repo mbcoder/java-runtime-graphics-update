@@ -14,11 +14,20 @@
  * under the License.
  */
 
-package com.esri.samples.graphics_update.client_app;
+package com.esri.samples.graphics_update.position_simulator;
 
-public class MoveGraphicsLauncher {
+/**
+ * A class for the vehicle message update runner
+ */
+public class UpdateMessageEventRunner {
 
-    public static void main(String[] args) {
-        MoveGraphicsSample.main(args);
+    private UpdateMessageListener listener;
+
+    public UpdateMessageEventRunner(UpdateMessageListener listener) {
+        this.listener = listener;
+    }
+
+    public void run(UpdateMessageEvent messageEvent) {
+        listener.updateMessage(messageEvent);
     }
 }

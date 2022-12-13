@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package com.esri.samples.graphics_update.position_sumulator;
+package com.esri.samples.graphics_update.position_simulator;
 
 import java.util.EventListener;
 

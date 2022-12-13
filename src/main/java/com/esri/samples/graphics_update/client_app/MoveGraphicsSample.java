@@ -20,16 +20,18 @@ import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
+import com.esri.arcgisruntime.mapping.BasemapStyle;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.esri.arcgisruntime.symbology.*;
-import com.esri.samples.graphics_update.position_sumulator.MessageGenerator;
-import com.esri.samples.graphics_update.position_sumulator.UpdateMessage;
+import com.esri.samples.graphics_update.position_simulator.MessageGenerator;
+import com.esri.samples.graphics_update.position_simulator.UpdateMessage;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -45,7 +47,7 @@ public class MoveGraphicsSample extends Application {
     public static void main(String[] args) {
         //if running from jPackage, get jniLibs from app directory
         if (System.getProperty("app.dir") != null) {
-            ArcGISRuntimeEnvironment.setInstallDirectory(System.getProperty("app.dir"));
+            ArcGISRuntimeEnvironment.setInstallDirectory(System.getProperty("app.dir")+"/libs");
         }
         Application.launch(args);
     }
@@ -59,7 +61,10 @@ public class MoveGraphicsSample extends Application {
         stage.setHeight(700);
         stage.show();
 
-        // create a JavaFX scene with a stack pane as the root node and add it to the scene
+      // authentication with an API key or named user is required to access basemaps and other location services
+      ArcGISRuntimeEnvironment.setApiKey("YOUR_API_KEY");
+
+      // create a JavaFX scene with a stack pane as the root node and add it to the scene
         StackPane stackPane = new StackPane();
         Scene scene = new Scene(stackPane);
         stage.setScene(scene);
@@ -69,7 +74,7 @@ public class MoveGraphicsSample extends Application {
         stackPane.getChildren().add(mapView);
 
         // create an ArcGISMap with a basemap
-        ArcGISMap map = new ArcGISMap(Basemap.createLightGrayCanvasVector());
+        ArcGISMap map = new ArcGISMap(BasemapStyle.ARCGIS_LIGHT_GRAY);
 
         // graphics overlay for vehicles
         graphicsOverlay = new GraphicsOverlay();
@@ -139,7 +144,7 @@ public class MoveGraphicsSample extends Application {
         uniqueValueRenderer.getFieldNames().add("STATUS");
 
         // default symbol
-        SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, 0xFFFF0000,10);
+        SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, Color.RED, 10);
         uniqueValueRenderer.setDefaultSymbol(simpleMarkerSymbol);
 
         // create a list of all of the potential symbol names that correspond to status values for the vehicles
