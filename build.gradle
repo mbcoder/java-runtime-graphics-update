@@ -105,7 +105,7 @@ jlink {
                 break
             case "linux":
                 installerType = 'deb'
-                imageName = "move-graphics-app"
+                imageName = "$applicationName"
                 installerName = "move-graphics-app"
                 installerOptions += ['--linux-shortcut']
                 break
