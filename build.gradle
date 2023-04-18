@@ -92,20 +92,20 @@ jlink {
             case "win":
                 imageName = "$applicationName"
                 installerType = 'msi'
-                installerName = "Display a Map"
+                installerName = "Move Graphics"
                 appVersion = version.split("-")[0] // default msi version rules only allow [0-255].[0-255].[0-65535]
                 installerOptions += ['--win-per-user-install', '--win-menu', '--win-shortcut', '--win-dir-chooser']
                 break
             case "mac":
                 // dmg seems to have signing issues, pkg seems to work
-                installerName = "Display a Map"
+                installerName = "Move Graphics"
                 imageName = "$applicationName"
                 appVersion = version.split("-")[0] // default mac application image version rules only allow [0-255].[0-255].[0-65535]
                 imageOptions += ['--mac-package-name', 'MoveGraphicsApp', '--mac-package-identifier', 'MoveGraphicsApp']
                 break
             case "linux":
                 installerType = 'deb'
-                imageName = "$applicationName"
+                imageName = "move-graphics"
                 installerName = "move-graphics-app"
                 installerOptions += ['--linux-shortcut']
                 break
