@@ -23,7 +23,7 @@ plugins {
 compileJava.options.encoding = 'UTF-8'
 
 // these tasks are automatically run when you call ./gradlew
-defaultTasks "clean", "copyNatives", "jpackage", "cleanSDK"
+defaultTasks "clean", "copyNatives", "jpackage", "cleanSDK", "notarise"
 
 ext {
     arcgisVersion = '200.0.0'
@@ -73,6 +73,22 @@ task copyNatives(type: Copy) {
 task cleanSDK(type: Delete) {
     description 'clean ArcGIS SDK install'
     delete "${System.properties.getProperty("user.home")}/.arcgis/${arcgisVersion}"
+}
+
+task notarise(type: Exec) {
+    switch (platform) {
+        case "win":
+            break
+        case "mac":
+            def scriptLocation = "notar.sh"
+            def appLocation = "${buildDir}/jpackage/${applicationName}.app"
+            def appleID = "jbloggs@esri.com" // todo put your email here
+            def pwd = "abcd-efgh-1234-5678" // todo put your app-specific password here
+            commandLine 'bash', "${scriptLocation}", "-a ${appLocation}", "-u ${appleID}", "-p ${pwd}"
+            break
+        case "linux":
+            break
+    }
 }
 
 run {
