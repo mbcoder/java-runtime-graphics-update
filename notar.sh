@@ -124,7 +124,7 @@ for file in "$(pwd)"/*.dmg ; do
 done
 
 # use hdiutil to create a read-only dmg with the notarised app inside
-hdiutil create "${NAMEONLY}".readonly.dmg -fs APFS -volname "Move Graphics App" -srcfolder "${APP}"
+hdiutil create "${NAMEONLY}".readonly.dmg -fs APFS -volname "${NAMEONLY}" -srcfolder "${APP}"
 
 # convert the read-only dmg into a writeable one
 hdiutil convert "${NAMEONLY}".readonly.dmg -format UDRW -o "${NAMEONLY}".rw.dmg
@@ -172,7 +172,7 @@ codesign --strict --force -vvv --sign "${CODESIGN}" --timestamp --entitlements "
 codesign --verify "${NAMEONLY}".dmg
 validate_exit_code_ $? "codesign --verify ${NAMEONLY}.dmg"
 
-echo "Sending DMG to Apple for notarization - this may take 5-15 minutes."
+echo "Sending DMG to Apple for notarization - this may take 10-30 minutes."
 RESPONSE=$(xcrun notarytool submit --wait --apple-id ${USERNAME} --password ${PASSWORD} --team-id P8HGHS7JQ8 "${NAMEONLY}".dmg)
 
 # Isolate the status code from the response body
