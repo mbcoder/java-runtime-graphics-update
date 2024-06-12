@@ -15,6 +15,7 @@
  */
 
 package com.esri.samples.graphics_update.client_app;
+import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.Basemap;
@@ -42,6 +43,10 @@ public class MoveGraphicsSample extends Application {
     private HashMap<String, Graphic> vehicles = new HashMap<>();
 
     public static void main(String[] args) {
+        //if running from jPackage, get jniLibs from app directory
+        if (System.getProperty("app.dir") != null) {
+            ArcGISRuntimeEnvironment.setInstallDirectory(System.getProperty("app.dir"));
+        }
         Application.launch(args);
     }
 
@@ -70,8 +75,8 @@ public class MoveGraphicsSample extends Application {
         graphicsOverlay = new GraphicsOverlay();
         mapView.getGraphicsOverlays().add(graphicsOverlay);
 
-
-        File stylxFile = new File("./resources/Vehicles.stylx");
+        // get the style file for rendering the points
+        File stylxFile = new File(System.getProperty("app.dir"),"resources/Vehicles.stylx");
         SymbolStyle vehicleStyle = new SymbolStyle(stylxFile.getAbsolutePath());
         vehicleStyle.loadAsync();
         vehicleStyle.addDoneLoadingListener(()-> {
